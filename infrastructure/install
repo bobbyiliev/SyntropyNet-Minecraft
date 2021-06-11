@@ -24,25 +24,7 @@ function nginx_install(){
 function mysql_install(){
     echo  "| Installing $MYSQL_SERVICE ";
 
-    MYSQLPASS=$(openssl rand -base64 32)
-
     apt update
-
-    echo '[client]' > ${HOME}/.my.cnf
-    echo 'user=root' >> ${HOME}/.my.cnf
-    echo 'password='${MYSQLPASS} >> ${HOME}/.my.cnf
-
-    chmod 600 ${HOME}/.my.cnf
-
-    export DEBIAN_FRONTEND=noninteractive
-    echo "mysql-server-5.7 mysql-server/root_password password $MYSQLPASS" | sudo debconf-set-selections
-    echo "mysql-server-5.7 mysql-server/root_password_again password $MYSQLPASS" | sudo debconf-set-selections
-    echo "mysql-server mysql-server/root-pass password ${MYSQLPASS}"|sudo debconf-set-selections
-    echo "mysql-server mysql-server/re-root-pass password ${MYSQLPASS}"|sudo debconf-set-selections
-    echo "mysql-server-8.0 mysql-server/root-pass password ${MYSQLPASS}"|sudo debconf-set-selections
-    echo "mysql-server-8.0 mysql-server/re-root-pass password ${MYSQLPASS}"|sudo debconf-set-selections
-
-
     apt install -y ${MYSQL_PACKAGE}
 }
 
@@ -71,7 +53,6 @@ function swap_setup(){
 
         echo  "| Adding swap file "
 
-
         # Create a swap file
         sudo fallocate -l 1G /swapfile
         sudo chmod 600 /swapfile
@@ -86,7 +67,7 @@ function swap_setup(){
 
 function composer_install(){
     echo  "| Installing Composer ";
-
+    export COMPOSER_ALLOW_SUPERUSER=1;
     curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 }
 
@@ -119,9 +100,10 @@ function laravel_install(){
 }
 
 function bungeecord_install(){
-    echo  "| Start BungeeCord Proxy in Screen "
-
-    screen -S BungeeCord -X stuff 'cd /var/www/syntropynet/infrastrucutre ; java -Xms512M -Xmx512M -jar BungeeCord.jar^M'
+    echo  "| Install and start BungeeCord Proxy in Screen "
+    apt install default-jre -y
+    screen -dmS BungeeCord
+    screen -R BungeeCord -X stuff 'cd /var/www/syntropynet/infrastructure/ ; java -Xms512M -Xmx512M -jar BungeeCord.jar^M'
 }
 
 function docker_install(){
@@ -131,6 +113,34 @@ function docker_install(){
 
 function start_syntropy_agent(){
     docker run --network="host" --restart=on-failure:10 --cap-add=NET_ADMIN   --cap-add=SYS_MODULE -v /var/run/docker.sock:/var/run/docker.sock:ro   --device /dev/net/tun:/dev/net/tun --name=syntropynet-agent   -e SYNTROPY_API_KEY=${API_KEY}   -e SYNTROPY_NETWORK_API='docker' -d syntropynet/agent:stable
+}
+
+function add_nginx_server_block(){
+
+if ! echo "server {
+        root /var/www/syntropynet/public;
+        index index.php index.html index.htm;
+        server_name _;
+        location / {
+                try_files \$uri \$uri/ /index.php?\$query_string;
+        }
+        location ~*  \.(jpg|jpeg|png|gif)\$1 {
+                expires 365d;
+        }
+        location ~*  \.(ico|css|js)\$ {
+                expires 365d;
+        }
+        location ~ \.php\$ {
+                include snippets/fastcgi-php.conf;
+                fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+        }
+        location ~ /\.ht {
+                deny all;
+        }
+}" > /etc/nginx/sites-available/default
+
+    systemctl restart nginx
+
 }
 
 function main(){
@@ -155,6 +165,10 @@ function main(){
     bungeecord_install
     docker_install
     start_syntropy_agent
+    add_nginx_server_block
+
+    sudo chown -R www-data:www-data /var/www
+
     echo  "| Happy Gaming! "
 }
 
