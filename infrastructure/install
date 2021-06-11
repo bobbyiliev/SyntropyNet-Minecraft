@@ -6,7 +6,8 @@
 #--------------------------------------------------------------------------
 #
 # To run the setup script just execute the follwoing commands:
-# # export API_KEY=YOUR_API_KEY_HERE
+# # export SYNTROPY_API_KEY=YOUR_SYNTROPY_API_KEY_HERE
+# # export DO_API_KEY=YOUR_DO_API_KEY_HERE
 # # git clone git@github.com:bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ; cd /var/www/syntropynet ; time bash infrastructure/install
 #--------------------------------------------------------------------------
 #/
@@ -96,6 +97,9 @@ function laravel_install(){
     cp .env.example .env
     sed -i "s/DB_PASSWORD=/DB_PASSWORD=${password}/g" /var/www/syntropynet/.env
 
+    sed -i "s/SYNTROPY_API_TOKEN=/SYNTROPY_API_TOKEN=${SYNTROPY_API_TOKEN}/g" /var/www/syntropynet/.env
+    sed -i "s/DO_API_KEY=/DO_API_KEY=${DO_API_KEY}/g" /var/www/syntropynet/.env
+
     composer install
 
     php artisan key:generate
@@ -122,7 +126,7 @@ function docker_install(){
 
 function start_syntropy_agent(){
     echo  "| Start the Syntropy agent in Docker "
-    docker run --network="host" --restart=on-failure:10 --cap-add=NET_ADMIN   --cap-add=SYS_MODULE -v /var/run/docker.sock:/var/run/docker.sock:ro   --device /dev/net/tun:/dev/net/tun --name=syntropynet-agent   -e SYNTROPY_API_KEY=${API_KEY}   -e SYNTROPY_NETWORK_API='docker' -d syntropynet/agent:stable
+    docker run --network="host" --restart=on-failure:10 --cap-add=NET_ADMIN   --cap-add=SYS_MODULE -v /var/run/docker.sock:/var/run/docker.sock:ro   --device /dev/net/tun:/dev/net/tun --name=syntropynet-agent   -e SYNTROPY_API_KEY=${SYNTROPY_API_KEY}   -e SYNTROPY_NETWORK_API='docker' -d syntropynet/agent:stable
 }
 
 function add_nginx_server_block(){
@@ -166,14 +170,33 @@ function install_syntropy_cli(){
 function install_doctl_cli(){
     echo  "| Install the doctl CLI "
     snap install doctl
+
+    echo  "| Create SSH Key and add it to DO account "
+    if [[ ! -d  /var/www/syntropynet/config/rsa_id ]] ; then
+        ssh-keygen -t rsa -N '' -f /var/www/syntropynet/config/rsa_id
+    fi
+
+    doctl auth init --access-token ${DO_API_KEY}
+
+    key_id=$(doctl compute ssh-key create $(hostname)-${RANDOM} --public-key "$(cat /var/www/syntropynet/config/rsa_id.pub)")
+    DO_SSH_KEY=$(echo $key_id | awk '{print $6}')
+    sed -i "s/DO_SSH_KEY=/DO_SSH_KEY=${DO_SSH_KEY}/g" /var/www/syntropynet/.env
+
 }
 
 function main(){
 
-    if [[ -z ${API_KEY} ]] ; then
+    if [[ -z ${SYNTROPY_API_KEY} ]] ; then
         echo "Specify the Syntrpy API Key with:"
         echo ""
-        echo "export API_KEY=YOUR_API_KEY_HERE"
+        echo "export SYNTROPY_API_KEY=YOUR_API_KEY_HERE"
+        exit 1
+    fi
+
+    if [[ -z ${DO_API_KEY} ]] ; then
+        echo "Specify the DigitalOcean API Key with:"
+        echo ""
+        echo "export DO_API_KEY=YOUR_DO_API_KEY_HERE"
         exit 1
     fi
 
