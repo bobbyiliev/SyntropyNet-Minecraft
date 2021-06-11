@@ -1,0 +1,141 @@
+#!/bin/bash
+
+#/
+#--------------------------------------------------------------------------
+# Install All Dependencies for the Syntropy Network
+#--------------------------------------------------------------------------
+#/
+
+# git clone https://github.com/bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ; cd /var/www/syntropynet ; bash infrastructure/install
+
+
+PHP="7.4"
+MYSQL_SERVICE="MySQL"
+MYSQL_PACKAGE="mysql-server"
+
+bar
+cyan "| Installing Nginx ";
+bar
+
+apt update -y
+apt -y install nginx
+systemctl restart nginx
+
+bar
+cyan "| Installing $MYSQL_SERVICE ";
+bar
+
+MYSQLPASS=$(openssl rand -base64 32)
+
+apt update
+
+echo '[client]' > ${HOME}/.my.cnf
+echo 'user=root' >> ${HOME}/.my.cnf
+echo 'password='${MYSQLPASS} >> ${HOME}/.my.cnf
+
+chmod 600 ${HOME}/.my.cnf
+
+export DEBIAN_FRONTEND=noninteractive
+echo "mysql-server-5.7 mysql-server/root_password password $MYSQLPASS" | sudo debconf-set-selections
+echo "mysql-server-5.7 mysql-server/root_password_again password $MYSQLPASS" | sudo debconf-set-selections
+echo "mysql-server mysql-server/root-pass password ${MYSQLPASS}"|sudo debconf-set-selections
+echo "mysql-server mysql-server/re-root-pass password ${MYSQLPASS}"|sudo debconf-set-selections
+echo "mysql-server-8.0 mysql-server/root-pass password ${MYSQLPASS}"|sudo debconf-set-selections
+echo "mysql-server-8.0 mysql-server/re-root-pass password ${MYSQLPASS}"|sudo debconf-set-selections
+
+
+apt install -y ${MYSQL_PACKAGE}
+
+bar
+cyan "| Installing PHP $PHP and all necessary files";
+bar
+
+apt update
+apt install -y language-pack-en-base
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+apt install -y software-properties-common
+add-apt-repository -y ppa:ondrej/php
+apt -y update
+apt -y upgrade
+
+apt install -y unzip php-cli screen
+apt install -y php$PHP-cli php$PHP-common php$PHP-mysql php$PHP-gd php$PHP-mysql php$PHP-curl php$PHP-mbstring php$PHP-xml php$PHP-zip php$PHP-fpm curl git
+
+rm /usr/bin/php
+ln -s /usr/bin/php$PHP /usr/bin/php
+
+CHECK_SWAP=$(swapon -s | wc -l)
+if [ $CHECK_SWAP -lt 1 ] ; then
+    bar
+    cyan "| Adding swap file "
+    bar
+
+    # Create a swap file
+    sudo fallocate -l 1G /swapfile
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+
+    # Making the swap file permanent
+    sudo cp /etc/fstab /etc/fstab.bak
+    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+fi
+
+bar
+cyan "| Installing Composer ";
+bar
+
+curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+
+bar
+cyan "| Installing npm"
+bar
+
+curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+sudo apt-get install -y nodejs
+
+bar
+cyan "| Installing certbot ";
+bar
+
+VER=$(lsb_release -sr)
+VER=${VER%.*}
+
+if [ $VER -ge 20 ] ; then
+	apt -y install python3-certbot-nginx
+else
+	add-apt-repository ppa:certbot/certbot
+	apt-get update
+	apt-get -y install python-certbot-nginx
+fi
+
+bar
+cyan "| Updating Permissions "
+bar
+
+sudo chown -R www-data:www-data /var/www
+
+mysql -e "CREATE DATABASE wave";
+cd /var/www/syntropynet
+
+cp .env.example .env
+
+composer install
+
+php artisan key:generate
+
+php artisan migrate
+
+php artisan db:seed 
+
+bar
+cyan "| Start BungeeCord Proxy in Screen "
+bar
+
+screen -S BungeeCord -X stuff 'cd /var/www/syntropynet/infrastrucutre ; java -Xms512M -Xmx512M -jar BungeeCord.jar^M'
+
+bar
+cyan "| Happy Gaming! "
+bar
+
