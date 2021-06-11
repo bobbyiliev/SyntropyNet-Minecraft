@@ -172,13 +172,13 @@ function install_doctl_cli(){
     snap install doctl
 
     echo  "| Create SSH Key and add it to DO account "
-    if [[ ! -d  /var/www/syntropynet/config/rsa_id ]] ; then
-        ssh-keygen -t rsa -N '' -f /var/www/syntropynet/config/rsa_id
+    if [[ ! -d  /var/www/syntropynet/config/id_rsa ]] ; then
+        ssh-keygen -t rsa -N '' -f /var/www/syntropynet/config/id_rsa
     fi
 
     doctl auth init --access-token ${DO_API_KEY}
 
-    key_id=$(doctl compute ssh-key create $(hostname)-${RANDOM} --public-key "$(cat /var/www/syntropynet/config/rsa_id.pub)")
+    key_id=$(doctl compute ssh-key create $(hostname)-${RANDOM} --public-key "$(cat /var/www/syntropynet/config/id_rsa.pub)")
     DO_SSH_KEY=$(echo $key_id | awk '{print $6}')
     sed -i "s/DO_SSH_KEY=/DO_SSH_KEY=${DO_SSH_KEY}/g" /var/www/syntropynet/.env
 
