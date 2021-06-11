@@ -3,9 +3,11 @@
 #/
 #--------------------------------------------------------------------------
 # Install All Dependencies for the Syntropy Network
+#--------------------------------------------------------------------------
+#
 # To run the setup script just execute the follwoing commands:
-# export export API_KEY=YOUR_API_KEY_HERE
-# git clone https://github.com/bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ; cd /var/www/syntropynet ; time bash infrastructure/install
+# # export API_KEY=YOUR_API_KEY_HERE
+# # git clone git@github.com:bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ; cd /var/www/syntropynet ; time bash infrastructure/install
 #--------------------------------------------------------------------------
 #/
 
@@ -81,13 +83,18 @@ function npm_install(){
 function laravel_install(){
 
     echo  "| Install Laravel "
+    password=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 14 | head -n 1)
 
     sudo chown -R www-data:www-data /var/www
 
-    mysql -e "CREATE DATABASE wave";
+    mysql -e "CREATE DATABASE wave DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
+    mysql -e "CREATE USER 'wave'@'%' IDENTIFIED WITH mysql_native_password BY '$password'";
+    mysql -e "GRANT ALL ON wave.* TO 'wave'@'%';"
+
     cd /var/www/syntropynet
 
     cp .env.example .env
+    sed -i "s/DB_PASSWORD=/DB_PASSWORD=${password}/g" /var/www/syntropynet/.env
 
     composer install
 
@@ -96,6 +103,8 @@ function laravel_install(){
     php artisan migrate
 
     php artisan db:seed
+
+    php artisan storage:link
 
 }
 
@@ -107,17 +116,19 @@ function bungeecord_install(){
 }
 
 function docker_install(){
-    apt update -y
-    apt install docker.io
+    echo  "| Install Docker "
+    apt install docker.io -y
 }
 
 function start_syntropy_agent(){
+    echo  "| Start the Syntropy agent in Docker "
     docker run --network="host" --restart=on-failure:10 --cap-add=NET_ADMIN   --cap-add=SYS_MODULE -v /var/run/docker.sock:/var/run/docker.sock:ro   --device /dev/net/tun:/dev/net/tun --name=syntropynet-agent   -e SYNTROPY_API_KEY=${API_KEY}   -e SYNTROPY_NETWORK_API='docker' -d syntropynet/agent:stable
 }
 
 function add_nginx_server_block(){
+    echo  "| Configure the Nginx service "
 
-if ! echo "server {
+echo "server {
         root /var/www/syntropynet/public;
         index index.php index.html index.htm;
         server_name _;
@@ -143,6 +154,20 @@ if ! echo "server {
 
 }
 
+function install_syntropy_cli(){
+    echo  "| Install the Syntropy CLI "
+    apt install python3-pip -y
+    pip install syntropycli
+    python3 -m site &> /dev/null && PATH="$PATH:`python3 -m site --user-base`/bin"
+
+    echo "Make sure to specify the SYNTROPY_API_TOKEN in your .env file"
+}
+
+function install_doctl_cli(){
+    echo  "| Install the doctl CLI "
+    snap install doctl
+}
+
 function main(){
 
     if [[ -z ${API_KEY} ]] ; then
@@ -166,6 +191,8 @@ function main(){
     docker_install
     start_syntropy_agent
     add_nginx_server_block
+    install_syntropy_cli
+    install_doctl_cli
 
     sudo chown -R www-data:www-data /var/www
 
