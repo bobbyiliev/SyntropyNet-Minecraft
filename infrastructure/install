@@ -249,6 +249,7 @@ function main(){
     start_syntropy_agent
     add_nginx_server_block
     install_syntropy_cli
+    create_syntropy_network
     install_doctl_cli
 
     sudo chown -R www-data:www-data /var/www
