@@ -6,11 +6,15 @@
 #--------------------------------------------------------------------------
 #
 # To run the setup script just execute the follwoing commands:
-# # export SYNTROPY_API_KEY=YOUR_SYNTROPY_API_KEY_HERE
+# # export SYNTROPY_AGENT_TOKEN=YOUR_SYNTROPY_AGENT_TOKEN_HERE
+# # export SYNTROPY_ACCESS_TOKEN=YOUR_SYNTROPY_ACCESS_TOKEN_HERE
 # # export DO_API_KEY=YOUR_DO_API_KEY_HERE
 # # git clone git@github.com:bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ; cd /var/www/syntropynet ; time bash infrastructure/install
 #--------------------------------------------------------------------------
 #/
+
+# SYNTROPY_API_KEY   = SYNTROPY_AGENT_TOKEN
+# SYNTROPY_API_TOKEN = SYNTROPY_ACCESS_TOKEN
 
 PHP="7.4"
 MYSQL_SERVICE="MySQL"
@@ -97,7 +101,8 @@ function laravel_install(){
     cp .env.example .env
     sed -i "s/DB_PASSWORD=/DB_PASSWORD=${password}/g" /var/www/syntropynet/.env
 
-    sed -i "s/SYNTROPY_API_TOKEN=/SYNTROPY_API_TOKEN=${SYNTROPY_API_TOKEN}/g" /var/www/syntropynet/.env
+    sed -i "s/SYNTROPY_AGENT_TOKEN=/SYNTROPY_AGENT_TOKEN=${SYNTROPY_AGENT_TOKEN}/g" /var/www/syntropynet/.env
+    sed -i "s/SYNTROPY_ACCESS_TOKEN=/SYNTROPY_ACCESS_TOKEN=${SYNTROPY_ACCESS_TOKEN}/g" /var/www/syntropynet/.env
     sed -i "s/DO_API_KEY=/DO_API_KEY=${DO_API_KEY}/g" /var/www/syntropynet/.env
 
     composer install
@@ -114,7 +119,7 @@ function laravel_install(){
 
 function bungeecord_install(){
     echo  "| Install and start BungeeCord Proxy in Screen "
-    apt install default-jre -y
+    apt install jq default-jre -y
     screen -dmS BungeeCord
     screen -R BungeeCord -X stuff 'cd /var/www/syntropynet/infrastructure/ ; java -Xms512M -Xmx512M -jar BungeeCord.jar^M'
 }
@@ -126,7 +131,7 @@ function docker_install(){
 
 function start_syntropy_agent(){
     echo  "| Start the Syntropy agent in Docker "
-    docker run --network="host" --restart=on-failure:10 --cap-add=NET_ADMIN   --cap-add=SYS_MODULE -v /var/run/docker.sock:/var/run/docker.sock:ro   --device /dev/net/tun:/dev/net/tun --name=syntropynet-agent   -e SYNTROPY_API_KEY=${SYNTROPY_API_KEY}   -e SYNTROPY_NETWORK_API='docker' -d syntropynet/agent:stable
+    docker run --network="host" --restart=on-failure:10 --cap-add=NET_ADMIN   --cap-add=SYS_MODULE -v /var/run/docker.sock:/var/run/docker.sock:ro   --device /dev/net/tun:/dev/net/tun --name=syntropynet-agent   -e SYNTROPY_API_KEY=${SYNTROPY_AGENT_TOKEN}   -e SYNTROPY_NETWORK_API='docker' -d syntropynet/agent:stable
 }
 
 function add_nginx_server_block(){
@@ -164,7 +169,29 @@ function install_syntropy_cli(){
     pip install syntropycli
     python3 -m site &> /dev/null && PATH="$PATH:`python3 -m site --user-base`/bin"
 
-    echo "Make sure to specify the SYNTROPY_API_TOKEN in your .env file"
+    echo "Make sure to specify the SYNTROPY_AGENT_TOKEN in your .env file"
+}
+
+function create_syntropy_network(){
+    echo  "| Create new BungeeCord Syntropy Network "
+    networks=$(syntropyctl get-networks --json | jq .[].network_name)
+    if [[ $string == *"BungeeCord"* ]]; then
+        echo "The BungeeCord already exists!"
+    else
+        export SYNTROPY_API_TOKEN=${SYNTROPY_ACCESS_TOKEN}
+        export SYNTROPY_API_SERVER=https://controller-prod-server.syntropystack.com
+        syntropyctl create-network BungeeCord
+    fi
+
+    echo  "| Get the current server endpoint id "
+    current_server_id=$(syntropyctl get-endpoints | grep -w $(hostname) | awk '{ print $2 }')
+
+    echo  "| Connect the endpoint with the newtwork "
+    syntropyctl manage-network-endpoints BungeeCord --add-endpoint ${current_server_id}
+    syntropyctl configure-endpoints ${current_server_id} --enable-all-services
+
+    # To configure a connection run:
+    # syntropyctl create-connections BungeeCord 2742 2720
 }
 
 function install_doctl_cli(){
@@ -186,10 +213,17 @@ function install_doctl_cli(){
 
 function main(){
 
-    if [[ -z ${SYNTROPY_API_KEY} ]] ; then
-        echo "Specify the Syntrpy API Key with:"
+    if [[ -z ${SYNTROPY_AGENT_TOKEN} ]] ; then
+        echo "Specify the Syntropy Agent Token with:"
         echo ""
-        echo "export SYNTROPY_API_KEY=YOUR_API_KEY_HERE"
+        echo "export SYNTROPY_AGENT_TOKEN=YOUR_SYNTROPY_AGENT_TOKEN_HERE"
+        exit 1
+    fi
+
+    if [[ -z ${SYNTROPY_ACCESS_TOKEN} ]] ; then
+        echo "Specify the Syntropy Acess API Token with:"
+        echo ""
+        echo "export SYNTROPY_ACCESS_TOKEN=YOUR_SYNTROPY_ACCESS_TOKEN"
         exit 1
     fi
 
