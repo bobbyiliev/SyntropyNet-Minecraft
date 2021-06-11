@@ -3,11 +3,11 @@
 #/
 #--------------------------------------------------------------------------
 # Install All Dependencies for the Syntropy Network
-# To run the setup script just execute the follwoing command:
-# git clone https://github.com/bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ; cd /var/www/syntropynet ; bash infrastructure/install
+# To run the setup script just execute the follwoing commands:
+# export export API_KEY=YOUR_API_KEY_HERE
+# git clone https://github.com/bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ; cd /var/www/syntropynet ; time bash infrastructure/install
 #--------------------------------------------------------------------------
 #/
-
 
 PHP="7.4"
 MYSQL_SERVICE="MySQL"
@@ -157,3 +157,5 @@ function main(){
     start_syntropy_agent
     echo  "| Happy Gaming! "
 }
+
+main
