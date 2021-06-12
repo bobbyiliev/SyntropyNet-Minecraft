@@ -20,6 +20,16 @@ PHP="7.4"
 MYSQL_SERVICE="MySQL"
 MYSQL_PACKAGE="mysql-server"
 
+function add_sudo_user(){
+    echo  "| Add new syntropy sudo user ";
+    # Create a new password and create our new syntropy user
+    PASS=$(openssl rand -base64 32)
+    useradd -G sudo -d /home/syntropy -p $PASS -m syntropy -s /bin/bash
+
+    # Give the syntropy user ability to not always require password
+    echo 'syntropy ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+}
+
 function nginx_install(){
     echo  "| Installing Nginx ";
 
@@ -90,7 +100,7 @@ function laravel_install(){
     echo  "| Install Laravel "
     password=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 14 | head -n 1)
 
-    sudo chown -R www-data:www-data /var/www
+    sudo chown -R syntropy:syntropy /var/www
 
     mysql -e "CREATE DATABASE wave DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
     mysql -e "CREATE USER 'wave'@'%' IDENTIFIED WITH mysql_native_password BY '$password'";
@@ -120,13 +130,16 @@ function laravel_install(){
 function bungeecord_install(){
     echo  "| Install and start BungeeCord Proxy in Screen "
     apt install jq default-jre -y
-    screen -dmS BungeeCord
-    screen -R BungeeCord -X stuff 'cd /var/www/syntropynet/infrastructure/ ; java -Xms512M -Xmx512M -jar BungeeCord.jar^M'
+    runuser -l  syntropy -c 'screen -dmS BungeeCord'
+    runuser -l  syntropy -c 'screen -R BungeeCord -X stuff "cd /var/www/syntropynet/infrastructure/ ; java -Xms512M -Xmx512M -jar BungeeCord.jar^M"'
 }
 
 function docker_install(){
     echo  "| Install Docker "
     apt install docker.io -y
+
+    # Add the syntropy user to the docker group.
+    usermod -aG docker syntropy
 }
 
 function start_syntropy_agent(){
@@ -158,6 +171,9 @@ echo "server {
                 deny all;
         }
 }" > /etc/nginx/sites-available/default
+
+    # Set the Nginx service to run as the syntropy user
+    sed -i "s/www-data/syntropy/g" /etc/nginx/nginx.conf
 
     systemctl restart nginx
 
@@ -237,6 +253,7 @@ function main(){
     echo "| Install All Dependencies for the Syntropy Network"
 
     # Call all functions
+    add_sudo_user
     nginx_install
     mysql_install
     php_install
@@ -252,7 +269,7 @@ function main(){
     create_syntropy_network
     install_doctl_cli
 
-    sudo chown -R www-data:www-data /var/www
+    sudo chown -R syntropy:syntropy /var/www
 
     echo  "| Happy Gaming! "
 }
