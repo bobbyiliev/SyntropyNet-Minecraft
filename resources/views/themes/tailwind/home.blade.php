@@ -61,6 +61,26 @@
             <p class="mt-4 leading-6 sm:text-center text-wave-200">MC Panel has some cool features to help you easily manage your Minecraft servers.<br class="hidden md:block"> Reduce your latency thanks to the out of the box Syntropy Network integration.</p>
 
             <div class="grid mt-16 gap-y-10 sm:grid-cols-2 sm:gap-x-8 md:gap-x-12 lg:grid-cols-3 xl:grid-cols-4 lg:gap-20">
+                <div>
+                    <img src="/themes/tailwind/images/proxy.png" class="w-16 rounded sm:mx-auto">
+                    <h3 class="mt-6 text-sm font-semibold leading-6 sm:text-center text-wave-100">BungeeCord Proxy</h3>
+                    <p class="mt-2 text-sm leading-5 sm:text-center text-wave-200">Automate your BugneeCord Proxy provisioning!</p>
+                </div>
+                <div>
+                    <img src="/themes/tailwind/images/automation.png" class="w-16 rounded sm:mx-auto">
+                    <h3 class="mt-6 text-sm font-semibold leading-6 sm:text-center text-wave-100">Automated Server Provisioning</h3>
+                    <p class="mt-2 text-sm leading-5 sm:text-center text-wave-200">Automatically provision your new Minecraft servers with a click of a button to increase your cluster capacity!</p>
+                </div>
+                <div>
+                    <img src="/themes/tailwind/images/network.png" class="w-16 rounded sm:mx-auto">
+                    <h3 class="mt-6 text-sm font-semibold leading-6 sm:text-center text-wave-100">Syntropy Integration</h3>
+                    <p class="mt-2 text-sm leading-5 sm:text-center text-wave-200">Out of the box Syntropy Network integration to reduce your latancy!</p>
+                </div>
+                <div>
+                    <img src="/themes/tailwind/images/failover.png" class="w-16 rounded sm:mx-auto">
+                    <h3 class="mt-6 text-sm font-semibold leading-6 sm:text-center text-wave-100">Automatic Failover</h3>
+                    <p class="mt-2 text-sm leading-5 sm:text-center text-wave-200">If one of your MC servers crashes the players will automatically fail over to another MC server in your cluster!</p>
+                </div>
                 @foreach(config('features') as $feature)
                     <div>
                         <img src="{{ $feature->image }}" class="w-16 rounded sm:mx-auto">
