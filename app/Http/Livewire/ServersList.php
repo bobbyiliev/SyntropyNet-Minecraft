@@ -21,7 +21,7 @@ class ServersList extends Component
             return;
         }
 
-        Process::fromShellCommandline('bash ' . base_path().'/infrastructure/debug.sh ')->start();
+        Process::fromShellCommandline('bash ' . base_path().'/infrastructure/debug.sh ' . $name)->start();
     }
 
     public function readLogFile()
