@@ -3,10 +3,14 @@
 export $(cat /var/www/syntropynet/.env | xargs)
 infrastructure_dir=/var/www/syntropynet/infrastructure
 
-lock_file=${infrastructure_dir}/remove.lock
 server_details=${infrastructure_dir}/server_details.temp
 #server_name=YXNkYXNkCg-syntropy-$(date +%s)
 server_name=${1}
+
+lock_file=${infrastructure_dir}/remove.lock
+if [[ -z $server_name ]] ; then
+    lock_file=${infrastructure_dir}/status.lock
+fi
 
 function main(){
     echo  "New server setup in progress... ${server_name}" > ${lock_file}

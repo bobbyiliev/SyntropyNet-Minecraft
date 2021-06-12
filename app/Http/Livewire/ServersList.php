@@ -14,14 +14,20 @@ class ServersList extends Component
     public $locked;
     public $log;
 
-    public function removeServer($name)
+    public function removeServer($name, $debug = null)
     {
 
         if($this->locked == true){
             return;
         }
 
-        Process::fromShellCommandline('bash ' . base_path().'/infrastructure/debug.sh ' . $name)->start();
+        if($debug){
+            Process::fromShellCommandline('bash ' . base_path().'/infrastructure/debug.sh ' . $name)->start();    
+            return;
+        }
+
+        Process::fromShellCommandline('bash ' . base_path().'/infrastructure/remove.sh ' . $name)->start();
+
     }
 
     public function readLogFile()

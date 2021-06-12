@@ -10,14 +10,19 @@ class AddServer extends Component
     public $locked;
     public $log;
 
-    public function addNewServer()
+    public function addNewServer($debug = null)
     {
 
         if($this->locked == true){
             return;
         }
 
-        Process::fromShellCommandline('bash ' . base_path().'/infrastructure/debug.sh')->start();
+        if($debug){
+            Process::fromShellCommandline('bash ' . base_path().'/infrastructure/debug.sh')->start();    
+            return;
+        }
+
+        Process::fromShellCommandline('bash ' . base_path().'/infrastructure/add.sh')->start();
 
     }
 
