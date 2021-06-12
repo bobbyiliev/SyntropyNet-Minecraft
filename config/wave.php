@@ -16,7 +16,7 @@ return [
 	],
 
 	'user_model' => App\User::class,
-	'show_docs' => env('WAVE_DOCS', true),
+	'show_docs' => env('WAVE_DOCS', false),
     'demo' => env('WAVE_DEMO', false),
     'dev_bar' => env('WAVE_BAR', false),
 

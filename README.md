@@ -16,11 +16,14 @@ Here are some of the awesome features ✨:
 
  - Automated BugeeCord Proxy Server Provisioning
  - Automated Minecraft server setup and management
+ - Web panel to manage your servers
  - Out of the box Syntropy Network integration
  - Users and User Profiles and Roles
  - User Notifications and Announcements
  - Fully Functional Blog
- 
+
+![Architecture](https://user-images.githubusercontent.com/21223421/121784770-8c1f0500-cbbe-11eb-8f9b-b939fa9058b8.png)
+
 ## 📹 Demo
 
 Video Comming Soon
