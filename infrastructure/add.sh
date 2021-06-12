@@ -66,7 +66,11 @@ function syntropy_config(){
 }
 
 function proxy_config(){
+    # Add the new server to the BungeeCord config
     cat ${infrastructure_dir}/temp.yaml | sed "s/S_NAME/${server_name}/g"  | sed "s/S_IP/${docker_endpoint_ip}/g" >> ${infrastructure_dir}/config.yml
+
+    # Add the new server to the redirect plugin config
+    sed '/^# SERVERS LIST.*/a \      - ${server_name}' ${infrastructure_dir}/plugins/RedirectPlus/config.yml
 
     echo  "| Reloding the proxy " > ${lock_file}
     screen -R 7261 -X stuff 'greload^M'

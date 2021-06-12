@@ -1,0 +1,165 @@
+# All the messages send by the plugin.
+messages:
+  # Supported placeholders for 'redirected' message:
+  # %from-server%  %to-server%  %from-group%  %to-group%  %reason%
+  redirected:
+    - "&f"
+    - "&cAn kick occurred in your connection. &cReason:&r %reason%"
+    - "&cYou have been send back to the main lobby."
+    - "&f"
+  unable-redirect-alias:
+    - "&f"
+    - "&cUnable to send you. All servers in that category are unavailable."
+    - "&f"
+  unable-redirect-alias-same-category:
+    - "&f"
+    - "&cUnable to send you to another server in this category."
+    - "&f"
+  alias-no-permission:
+    - "&cYou don't have enough permissions to join this server group."
+  alias-not-allowed-server:
+    - "&cYou cannot use that command here!"
+
+# The amount of time between checking if a server is online.
+# Players won't be connected to offline servers.
+check: 30
+
+# The delay that is given to the redirect message.
+# When you have a lot of messages when a player joins a certain server this can help to make sure that the redirectplus messages shows as 'newest'.
+# The delay is in seconds.
+delay: 0
+
+# Blacklist. When a kick message contains this word they will NOT get redirected.
+#   This will result in the player seeing the kick screen.
+blacklist:
+  - "ban"
+
+# Detect shutdown in server kick messages
+#   This can be faster for when you want to shutdowns servers and using RedirectPlus to redirectplus those people.
+detect-shutdown:
+  enabled: true
+  messages:
+  - "shutdown"
+  - "restart"
+  - "closed"
+
+# Don't show the redirect message if the message contains one of the following words.
+# Can be useful when redirecting people from a game lobby and stuff.
+no-messages:
+  - "[Silent]"
+
+# Disable the uses of aliases on specific servers.
+# Useful when having auth servers and AuthMe is not installed on the BungeeCord
+disable-aliases:
+  # A list of servers to disable the aliases on.
+  servers:
+    - someserver1
+    - someserver2
+  # Regex to identify these servers.
+  regex: "none"
+
+# unknown-group / server
+# This will redirect unknown servers to the group listed here:
+unknown-group: lobby
+
+# Specify defaults here. You can overwrite these settings by adding them to groups them self.
+global:
+  # Spread modes:
+  #   PROGRESSIVE : Fill the server to the progressive-minimal amount, after that fill the next one, giving nicely populated lobbies. Uses LOWEST when the minimal is reached on all servers.
+  #   CYCLE       : Cycle to the server to spread the load as much as possible. This can result in players being in a server on their own.
+  #   LOWEST      : Send the player to the server with the lowest amount of players online.
+  #   HIGHEST     : Send the players to the server with the highest amount of players. (Not adviced!)
+  spread-mode: LOWEST
+
+  # The minimal amount of players that are on a server before the next server gets selected.
+  progressive-minimal: 20
+
+# Server groups and their settings
+groups:
+  lobby:
+    # If kicked from this server group, no redirects will happen.
+    bottom-kick: false
+    # Spread redirected people over the servers.
+    spread: true
+    # Spread mode, if spread is enabled, use the following spread mode (will overwrite global if used).
+    spread-mode: PROGRESSIVE
+    # The minimal amount of players that are on a server before the next server gets selected. (only used for PROGRESSIVE spread)
+    progressive-minimal: 20
+    # Parent group - If none of the servers are available, the parent group will be used.
+    # Set to none if none. If the parent server group is needed the player will be kicked instead.
+    parent-group: none
+    servers:
+# SERVERS LIST
+      - lobby
+    servers-regex: 'none'
+    # Servers that are connected to this group, but they won't be redirected to:
+    connected: {}
+    connected-regex: 'none'
+    # Aliases can be used to redirect people to the server group when they use a certain command (Eg: lobby, hub, survival, towny, etc)
+    aliases: {}
+  games:
+    bottom-kick: false
+    spread: true
+    parent-group: lobby
+    # These servers do not have lobbies them self so we use a parent group.
+    servers: {}
+    servers-regex: 'none'
+    connected:
+      - survival
+      - pvp
+    connected-regex: 'none'
+    # Aliases can be used to redirect people to the server group when they use a certain command (Eg: lobby, hub, survival, towny, etc)
+    aliases:
+      - games
+
+# Log settings, this will show your messages in console so you know what's going on.
+log:
+  # If set to true the plugin will log redirects attempts that are canceled due to blacklisted words.
+  blacklist: true
+  # If set to true the plugin will log redirects that fail because no server was found.
+  redirect-failed: true
+  # If set to true the plugin will log players that do not get redirected due to the bottom-kick setting enabled.
+  bottom-kick: false
+  # If set to true the plugin will log successful redirect attempts.
+  redirected: true
+  # If set to true the plugin will log any cancelled redirect attempts due to inactive connections.
+  inactive: true
+
+# EXAMPLE SETUP
+#groups:
+#  # The main lobby. If kicked from here they should not be redirected so we enable bottom-kick.
+#  # There are no connected servers here.
+#  main-lobby:
+#    bottom-kick: true
+#    spread: true
+#    parent-group: none
+#    servers:
+#      - lobby1
+#      - lobby2
+#      - lobby3
+#    connected: {}
+#    # Aliases can be used to redirect people to the server group when they use a certain command (Eg: lobby, hub, survival, towny, etc)
+#    aliases:
+#      - lobbies
+#      - lobby
+#  # This is the survival games group.
+#  # bottom-kick is false, since we want redirects from the connected servers.
+#  # The lobby servers are in the 'servers' list (so they will be redirected to) and the game servers are in the 'connected' list.
+#  survivalgames:
+#    bottom-kick: false
+#    spread: true
+#    parent-group: none
+#    permission: server.survivalgames
+#    servers:
+#      - sg-lobby-1
+#      - sg-lobby-2
+#    connected:
+#      - sg-game-1
+#      - sg-game-2
+#      - sg-game-3
+#      - sg-game-4
+#      - sg-game-5
+#    # Aliases can be used to redirect people to the server group when they use a certain command (Eg: lobby, hub, survival, towny, etc)
+#    aliases:
+#      - survivalgames
+#      - sg

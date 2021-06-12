@@ -17,7 +17,9 @@ lock_file=${infrastructure_dir}/remove.lock
 
 function remove_from_proxy(){
     echo "Removing server from proxy..." > ${lock_file}
-    sed -i -e  "/${server_name}/,+3d" ${infrastructure_dir}config.yml
+    sed -i -e  "/${server_name}/,+3d" ${infrastructure_dir}/config.yml
+
+    sed -i "/^      - ${server_name}/d" ${infrastructure_dir}/plugins/RedirectPlus/config.yml
 
     echo "Restarting the proxy server..." > ${lock_file}
     screen -R BungeeCord -X stuff 'greload^M'
