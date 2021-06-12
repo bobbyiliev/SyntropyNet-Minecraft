@@ -11,19 +11,28 @@ class ServersList extends Component
 
     public $servers;
     public $proxyServer;
+    public $locked;
+    public $log;
 
     public function removeServer($name)
     {
 
-        //To do:
-        // Remove the link from Syntropy
-        // Delete the Server from DO
-        // Remove from the config file
+        if($this->locked == true){
+            return;
+        }
 
-        // $process = new Process(['bash', base_path().'/infrastructure/remove.sh']);
-        // $process->run();
+        Process::fromShellCommandline('bash ' . base_path().'/infrastructure/debug.sh ')->start();
+    }
 
-        // $this->servers = $process->getOutput();
+    public function readLogFile()
+    {
+        $content = file_get_contents(base_path().'/infrastructure/remove.lock');
+        if(trim($content) == "DONE" || empty($content)){
+            $this->locked = false;
+        } else {
+            $this->locked = true;
+        }
+        $this->log = $content;
     }
 
     public function getServers()
@@ -41,6 +50,7 @@ class ServersList extends Component
 
     public function render()
     {
+        $this->readLogFile();
         return view('livewire.servers-list');
     }
 }

@@ -2,30 +2,39 @@
 
 namespace App\Http\Livewire;
 
+use Symfony\Component\Process\Process;
 use Livewire\Component;
 
 class AddServer extends Component
 {
+    public $locked;
+    public $log;
+
     public function addNewServer()
     {
 
-        //To do:
-        // Create new DO server
-        // Wait for the server to be ready
-        // Do the setup on the server
-        // Add the new server to the syntropy network and allow the connections
-        // Get the IP and the name and update the config.yaml
-        // Restart the proxy
-        // show some logs/output to the user
+        if($this->locked == true){
+            return;
+        }
 
-        // $process = new Process(['bash', base_path().'/infrastructure/add.sh']);
-        // $process->run();
+        Process::fromShellCommandline('bash ' . base_path().'/infrastructure/debug.sh')->start();
 
-        // $this->servers = $process->getOutput();
+    }
+
+    public function readLogFile()
+    {
+        $content = file_get_contents(base_path().'/infrastructure/status.lock');
+        if(trim($content) == "DONE" || empty($content)){
+            $this->locked = false;
+        } else {
+            $this->locked = true;
+        }
+        $this->log = $content;
     }
 
     public function render()
     {
+        $this->readLogFile();
         return view('livewire.add-server');
     }
 }

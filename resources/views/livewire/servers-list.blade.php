@@ -19,6 +19,13 @@
             </div>
             <div class="relative p-5">
                 <div class="text-base leading-loose text-gray-500">
+                    @if(!empty($log))
+                        <pre class="scrollbar-none overflow-x-auto p-6 text-sm leading-snug language-html text-white bg-black bg-opacity-75">{{ $log }}</pre>
+                    @endif
+                </div>
+            </div>
+            <div class="relative p-5">
+                <div class="text-base leading-loose text-gray-500">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
@@ -46,8 +53,12 @@
                                         <div class="text-sm text-gray-900">{{ $server['address'] }}</div>
                                     </td>
     
-                                    <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                        <button wire:click="delete({{ $name }})" class="text-indigo-600 hover:text-indigo-900">Delete</button>
+                                    <td class="px-6 py-4 text-sm font-medium text-right content-end whitespace-nowrap">
+                                        @if($locked == false)
+                                            <button wire:click="removeServer('{{ $name }}')" class="text-indigo-600 hover:text-indigo-900">Delete</button>
+                                        @else
+                                            <a class="font-thin" style="cursor: wait;">Delete</a>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
