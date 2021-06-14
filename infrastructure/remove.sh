@@ -31,7 +31,7 @@ function remove_from_syntropy(){
     export SYNTROPY_API_SERVER=https://controller-prod-server.syntropystack.com
 
     endpoint_id=$(/usr/local/bin/syntropyctl get-endpoints | grep -w ${server_name} | awk '{ print $2 }')
-    manage-network-endpoints --remove-endpoint-with-connections ${endpoint_id}
+    /usr/local/bin/syntropyctl manage-network-endpoints --remove-endpoint-with-connections ${endpoint_id}
 }
 
 function remove_from_digitalocean(){

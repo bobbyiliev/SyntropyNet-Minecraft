@@ -18,7 +18,7 @@ function new_server(){
     echo  "New server setup in progress..." > ${lock_file}
     echo  "server_name=${server_name}" > ${server_details}
     /snap/bin/doctl auth init --access-token ${DO_API_KEY}
-    new_droplet=$(/snap/bin/doctl compute droplet create ${server_name} --size s-1vcpu-2gb --image ubuntu-20-04-x64 --region fra1 --ssh-keys ${DO_SSH_KEY} --format ID)
+    new_droplet=$(/snap/bin/doctl compute droplet create ${server_name} --size s-1vcpu-2gb --image docker-20-04 --region fra1 --ssh-keys ${DO_SSH_KEY} --format ID)
     new_droplet_id=$(echo $new_droplet | sed 's/ID //')
 
     sleep 20
@@ -40,13 +40,21 @@ function new_server(){
 }
 
 function run_server(){
-    echo  "Server configuration in progress..." > ${lock_file}
+    echo  "Waiting for SSH connection..." > ${lock_file}
     ssh -i /var/www/syntropynet/config/id_rsa -o "StrictHostKeyChecking no" root@${new_droplet_ip} hostname
     while [ $? -ne 0 ]; do
         sleep 5
+        ssh -i /var/www/syntropynet/config/id_rsa -o "StrictHostKeyChecking no" root@${new_droplet_ip} hostname
     done
-    ssh -i /var/www/syntropynet/config/id_rsa -o "StrictHostKeyChecking no" root@${new_droplet_ip} env SYNTROPY_AGENT_TOKEN=${SYNTROPY_AGENT_TOKEN} 'bash -s' < ${infrastructure_dir}/minecraft_server.sh
-    wait
+
+    echo  "Server configuration in progress..." > ${lock_file}
+    scp -i /var/www/syntropynet/config/id_rsa -o "StrictHostKeyChecking no" ${infrastructure_dir}/minecraft_server.sh root@${new_droplet_ip}:/root
+
+    ssh -i /var/www/syntropynet/config/id_rsa -o "StrictHostKeyChecking no" root@${new_droplet_ip} env SYNTROPY_AGENT_TOKEN=${SYNTROPY_AGENT_TOKEN} bash /root/minecraft_server.sh
+
+    ssh -i /var/www/syntropynet/config/id_rsa -o "StrictHostKeyChecking no" root@${new_droplet_ip} "docker network create bungee ; docker run -d -it -p 25565:25565 --network bungee -e TYPE=SPIGOT -e ONLINE_MODE=FALSE -e EULA=TRUE itzg/minecraft-server"
+
+    sleep 120
 }
 
 function syntropy_config(){

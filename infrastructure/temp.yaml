@@ -2,3 +2,4 @@
     motd: '&1 S_NAME'
     address: S_IP:25565
     restricted: false
+
