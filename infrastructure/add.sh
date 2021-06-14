@@ -54,7 +54,7 @@ function run_server(){
 
     ssh -i /var/www/syntropynet/config/id_rsa -o "StrictHostKeyChecking no" root@${new_droplet_ip} "docker network create bungee ; docker run -d -it -p 25565:25565 --network bungee -e TYPE=SPIGOT -e ONLINE_MODE=FALSE -e EULA=TRUE itzg/minecraft-server"
 
-    sleep 120
+    sleep 60
 }
 
 function syntropy_config(){
@@ -68,8 +68,9 @@ function syntropy_config(){
     new_server_id=$(/usr/local/bin/syntropyctl get-endpoints | grep -w ${server_name} | awk '{ print $2 }')
 
     echo  "| Connect the new endpoint with the newtwork " > ${lock_file}
-    /usr/local/bin/syntropyctl manage-network-endpoints BungeeCord --add-endpoint ${new_server_id}
     /usr/local/bin/syntropyctl configure-endpoints ${new_server_id} --enable-all-services
+    sleep 2
+    /usr/local/bin/syntropyctl manage-network-endpoints BungeeCord --add-endpoint ${new_server_id}
 
     echo  "| Configure the BungeeCord connection " > ${lock_file}
     /usr/local/bin/syntropyctl create-connections BungeeCord ${new_server_id} ${current_server_id}
