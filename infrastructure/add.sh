@@ -52,7 +52,9 @@ function run_server(){
 
     ssh -i /var/www/syntropynet/config/id_rsa -o "StrictHostKeyChecking no" root@${new_droplet_ip} env SYNTROPY_AGENT_TOKEN=${SYNTROPY_AGENT_TOKEN} bash /root/minecraft_server.sh
 
-    ssh -i /var/www/syntropynet/config/id_rsa -o "StrictHostKeyChecking no" root@${new_droplet_ip} "docker network create bungee ; docker run -d -it -p 25565:25565 --network bungee -e TYPE=SPIGOT -e ONLINE_MODE=FALSE -e EULA=TRUE itzg/minecraft-server"
+    range=$(grep address: infrastructure/config.yml  | awk '{ print $2 }'  | awk -F. '{print $2}' | sort -n | tail -1)
+    range=$(( $range +1 ))
+    ssh -i /var/www/syntropynet/config/id_rsa -o "StrictHostKeyChecking no" root@${new_droplet_ip} "docker network create bungee --subnet=10.${range}.0.0/16 ; docker run -d -it -p 25565:25565 --network bungee -e TYPE=SPIGOT -e ONLINE_MODE=FALSE -e EULA=TRUE itzg/minecraft-server"
 
     sleep 30
 }
