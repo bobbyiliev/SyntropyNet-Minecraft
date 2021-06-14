@@ -66,10 +66,11 @@ function syntropy_config(){
     echo  "| Get the new server endpoint id " > ${lock_file}
     current_server_id=$(/usr/local/bin/syntropyctl get-endpoints | grep -w $(hostname) | awk '{ print $2 }')
     new_server_id=$(/usr/local/bin/syntropyctl get-endpoints | grep -w ${server_name} | awk '{ print $2 }')
+    /usr/local/bin/syntropyctl configure-endpoints ${new_server_id} --enable-all-services >> /tmp/endpoint.txt
     wait
 
     echo  "| Connect the new endpoint with the newtwork " > ${lock_file}
-    /usr/local/bin/syntropyctl configure-endpoints ${new_server_id} --enable-all-services
+    /usr/local/bin/syntropyctl configure-endpoints ${new_server_id} --enable-all-services >> /tmp/endpoint.txt
     sleep 2
     /usr/local/bin/syntropyctl manage-network-endpoints BungeeCord --add-endpoint ${new_server_id}
 
@@ -85,7 +86,7 @@ function proxy_config(){
     cat ${infrastructure_dir}/temp.yaml | sed "s/S_NAME/${server_name}/g"  | sed "s/S_IP/${docker_endpoint_ip}/g" >> ${infrastructure_dir}/config.yml
 
     # Add the new server to the redirect plugin config
-    sed "/^# SERVERS LIST.*/a \      - ${server_name}" ${infrastructure_dir}/plugins/RedirectPlus/config.yml
+    sed -i  "/^# SERVERS LIST.*/a \      - ${server_name}" ${infrastructure_dir}/plugins/RedirectPlus/config.yml
 
     echo  "| Reloding the proxy " > ${lock_file}
     screen -R 7261 -X stuff 'greload^M'
