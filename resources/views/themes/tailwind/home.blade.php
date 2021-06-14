@@ -26,7 +26,7 @@
                 <div class="flex w-full mb-16 lg:w-1/2 lg:mb-0">
 
                     <div class="relative invisible transition-none duration-1000 delay-100 transform translate-x-12 opacity-0" data-replace='{ "transition-none": "transition-all", "invisible": "visible", "translate-x-12": "translate-y-0", "opacity-0": "opacity-100" }'>
-                        <img src="{{ Voyager::image(theme('home_promo_image')) }}" class="w-full max-w-3xl sm:w-auto">
+                        <img src="/storage/themes/February2018/mFajn4fwpGFXzI1UsNH6.png" class="w-full max-w-3xl sm:w-auto">
                     </div>
 
                 </div>

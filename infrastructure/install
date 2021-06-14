@@ -132,6 +132,7 @@ function bungeecord_install(){
     apt install jq default-jre -y
     runuser -l  syntropy -c 'screen -dmS BungeeCord'
     runuser -l  syntropy -c 'screen -R BungeeCord -X stuff "cd /var/www/syntropynet/infrastructure/ ; java -Xms512M -Xmx512M -jar BungeeCord.jar^M"'
+    runuser -l  syntropy -c '/home/syntropy/.config'
 }
 
 function docker_install(){
@@ -174,8 +175,10 @@ echo "server {
 
     # Set the Nginx service to run as the syntropy user
     sed -i "s/www-data/syntropy/g" /etc/nginx/nginx.conf
+    sed -i "s/www-data/syntropy/g" /etc/php/7.4/fpm/pool.d/www.conf
 
     systemctl restart nginx
+    systemctl restart php7.4-fpm.service
 
 }
 
@@ -190,12 +193,13 @@ function install_syntropy_cli(){
 
 function create_syntropy_network(){
     echo  "| Create new BungeeCord Syntropy Network "
+    export SYNTROPY_API_TOKEN=${SYNTROPY_ACCESS_TOKEN}
+    export SYNTROPY_API_SERVER=https://controller-prod-server.syntropystack.com
+
     networks=$(syntropyctl get-networks --json | jq .[].network_name)
     if [[ $string == *"BungeeCord"* ]]; then
         echo "The BungeeCord already exists!"
     else
-        export SYNTROPY_API_TOKEN=${SYNTROPY_ACCESS_TOKEN}
-        export SYNTROPY_API_SERVER=https://controller-prod-server.syntropystack.com
         syntropyctl create-network BungeeCord
     fi
 

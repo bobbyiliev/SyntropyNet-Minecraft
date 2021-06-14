@@ -27,12 +27,23 @@ function remove_from_proxy(){
 
 function remove_from_syntropy(){
     echo "Removing server from Syntropy network..." > ${lock_file}
-    new_server_id=$(syntropyctl get-endpoints | grep -w ${server_name} | awk '{ print $2 }')
+    export SYNTROPY_API_TOKEN=${SYNTROPY_ACCESS_TOKEN}
+    export SYNTROPY_API_SERVER=https://controller-prod-server.syntropystack.com
+
+    endpoint_id=$(/usr/local/bin/syntropyctl get-endpoints | grep -w ${server_name} | awk '{ print $2 }')
     manage-network-endpoints --remove-endpoint-with-connections ${endpoint_id}
 }
 
 function remove_from_digitalocean(){
     echo "Deleting server from DigitalOcean..." > ${lock_file}
-    doctl auth init --access-token ${DO_API_KEY}
-    doctl compute droplet delete ${server_name}
+    /snap/bin/doctl auth init --access-token ${DO_API_KEY}
+    /snap/bin/doctl compute droplet delete ${server_name} --force
 }
+
+function main(){
+    remove_from_proxy
+    remove_from_syntropy
+    remove_from_digitalocean
+    echo "DONE" > ${lock_file}
+}
+main
