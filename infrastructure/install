@@ -132,7 +132,7 @@ function bungeecord_install(){
     apt install jq default-jre -y
     runuser -l  syntropy -c 'screen -dmS BungeeCord'
     runuser -l  syntropy -c 'screen -R BungeeCord -X stuff "cd /var/www/syntropynet/infrastructure/ ; java -Xms512M -Xmx512M -jar BungeeCord.jar^M"'
-    runuser -l  syntropy -c '/home/syntropy/.config'
+    runuser -l  syntropy -c 'mkdir /home/syntropy/.config'
 }
 
 function docker_install(){
