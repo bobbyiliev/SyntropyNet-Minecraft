@@ -35,9 +35,9 @@ class AnnouncementsTableSeeder extends Seeder
             1 =>
             array (
                 'id' => 2,
-                'title' => 'Wave 2.0 Released',
-                'description' => 'Wave V2 has been released with some awesome new features. Be sure to read up on what\'s new!',
-                'body' => '<p>This new version of Wave includes the following updates:</p><ul><li>Update to the latest version of Laravel</li><li>New Payment integration with Paddle</li><li>Rewritten theme support</li><li>Deployment integration</li><li>Much more awesomeness</li></ul><p>Be sure to check out the official Wave v2 page at <a href="https://devdojo.com/wave">https://devdojo.com/wave</a></p>',
+                'title' => 'MC Panel was just release',
+                'description' => 'MC Panel V2 has been released with some awesome new features. Be sure to read up on what\'s new!',
+                'body' => '<p>The MC Panel helps you to automate the provisioning of your Minecraft Servers along with Bungeecord Proxy and the Syntropy Network. This version is based on Laravel Wave which includes the following updates:</p><ul><li>Update to the latest version of Laravel</li><li>New Payment integration with Paddle</li><li>Rewritten theme support</li><li>Deployment integration</li><li>Much more awesomeness</li></ul><p>Be sure to check out the official Wave v2 page at <a href="https://devdojo.com/wave">https://devdojo.com/wave</a></p>',
                 'created_at' => '2020-03-20 23:19:00',
                 'updated_at' => '2020-03-21 00:38:02',
         )));

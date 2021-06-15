@@ -14,8 +14,7 @@
 		</div>
 
 		<div class="flex flex-col w-full p-10 overflow-hidden bg-white border rounded-lg lg:w-2/3 border-gray-150 lg:flex-2">
-			<p class="text-lg text-gray-600">Your application info about {{ $user->name }} here</p>
-		    <p class="mt-5 text-lg text-gray-600">You can edit this template inside of <code class="px-2 py-1 font-mono text-base font-medium text-gray-600 bg-indigo-100 rounded-md">resources/views/{{ theme_folder('/profile.blade.php') }}</code></p>
+			<p class="text-lg text-gray-600">User profiles are coming soon!</p>
 		</div>
 
 	</div>

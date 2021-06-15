@@ -26,44 +26,53 @@
             </div>
             <div class="relative p-5">
                 <div class="text-base leading-loose text-gray-500">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col"
-                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                    Server Name
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                    Server IP
-                                </th>
-                                <th scope="col"
-                                    class="px-6 py-3 text-xs font-medium tracking-wider text-left text-right text-gray-500 uppercase">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($servers as $name => $server)
+                    @if(count($servers) == 1)
+                    <div class="relative flex-1 text-center mb-6">
+                        <h3 class="text-md font-medium leading-6 text-gray-700">
+                            You don't have any servers yet!<br> Hit the `Add a new server` button bellow to create a server!
+                    </div>
+                    @else
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $name}}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">{{ $server['address'] }}</div>
-                                    </td>
-    
-                                    <td class="px-6 py-4 text-sm font-medium text-right content-end whitespace-nowrap">
-                                        @if($locked == false)
-                                            <button wire:click="removeServer('{{ $name }}')" class="text-indigo-600 hover:text-indigo-900">Delete</button>
-                                        @else
-                                            <a class="font-thin" style="cursor: wait;">Delete</a>
-                                        @endif
-                                    </td>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Server Name
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                                        Server IP
+                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-xs font-medium tracking-wider text-left text-right text-gray-500 uppercase">
+                                        Actions
+                                    </th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach ($servers as $name => $server)
+                                    @if($server['address'] != 'localhost:25565')
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900">{{ $name}}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900">{{ $server['address'] }}</div>
+                                            </td>
+            
+                                            <td class="px-6 py-4 text-sm font-medium text-right content-end whitespace-nowrap">
+                                                @if($locked == false)
+                                                    <button wire:click="removeServer('{{ $name }}')" class="text-indigo-600 hover:text-indigo-900">Delete</button>
+                                                @else
+                                                    <a class="font-thin" style="cursor: wait;">Delete</a>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
                 </div>
             </div>
         </div>
