@@ -17,6 +17,8 @@ class AddServer extends Component
             return;
         }
 
+        $this->locked = true;
+
         if($debug){
             Process::fromShellCommandline('bash ' . base_path().'/infrastructure/debug.sh')->start();    
             return;

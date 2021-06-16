@@ -21,6 +21,8 @@ class ServersList extends Component
             return;
         }
 
+        $this->locked = true;
+
         if($debug){
             Process::fromShellCommandline('bash ' . base_path().'/infrastructure/debug.sh ' . $name)->start();    
             return;
