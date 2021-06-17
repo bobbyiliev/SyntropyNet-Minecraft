@@ -10,7 +10,8 @@
                         Welcome to your Minecraft Server Manager Dashboard
                     </h3>
                     <p class="text-sm leading-5 text-gray-500 mt">
-                        Your BungeeCord Proxy is running on <strong class="text-strong">{{ $proxyServer }}:25577</strong>
+                        Your BungeeCord Proxy is running on <strong class="text-strong">{{ $proxyServer }}</strong><br>
+                        You can connect to <strong class="text-strong">{{ $proxyServer }}</strong> and the traffic will be distributed between the available nodes.
                     </p>
                     <p class="text-sm leading-5 text-gray-500 mt">
                         Here is a list of all of your servers:
@@ -41,7 +42,7 @@
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
-                                        Server IP
+                                        Syntropy Network Server IP
                                     </th>
                                     <th scope="col"
                                         class="px-6 py-3 text-xs font-medium tracking-wider text-left text-right text-gray-500 uppercase">
@@ -51,7 +52,7 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach ($servers as $name => $server)
-                                    @if($server['address'] != 'localhost:25565')
+                                    @if($server['address'] != 'localhost:25577')
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm text-gray-900">{{ $name}}</div>

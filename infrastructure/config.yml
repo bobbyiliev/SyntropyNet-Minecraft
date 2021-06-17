@@ -45,5 +45,5 @@ disabled_commands:
 servers:
   lobby:
     motd: '&1Just another BungeeCord - Forced Host'
-    address: localhost:25565
+    address: localhost:25577
     restricted: false

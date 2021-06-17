@@ -15,6 +15,7 @@ MC Panel is built with [Syntropy](https://syntropystack.com), [Laravel Wave](htt
 Here are some of the awesome features ✨:
 
  - Automated BugeeCord Proxy Server Provisioning
+ - Spin up a fallback lobby server
  - Automated Minecraft server setup and management
  - Web panel to manage your servers
  - Out of the box Syntropy Network integration
