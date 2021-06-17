@@ -91,7 +91,9 @@ function proxy_config(){
     sed -i  "/^# SERVERS LIST.*/a \      - ${server_name}" ${infrastructure_dir}/plugins/RedirectPlus/config.yml
 
     echo  "| Reloding the proxy " > ${lock_file}
-    screen -R 7261 -X stuff 'greload^M'
+    screen -R BungeeCord -X stuff 'rd refresh^M'
+    sleep 1
+    screen -R BungeeCord -X stuff 'greload^M'
 }
 
 function main(){

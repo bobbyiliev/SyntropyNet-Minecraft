@@ -22,6 +22,8 @@ function remove_from_proxy(){
     sed -i "/^      - ${server_name}/d" ${infrastructure_dir}/plugins/RedirectPlus/config.yml
 
     echo "Restarting the proxy server..." > ${lock_file}
+    screen -R BungeeCord -X stuff 'rd refresh^M'
+    sleep 1
     screen -R BungeeCord -X stuff 'greload^M'
 }
 
