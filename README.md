@@ -23,7 +23,7 @@ Here are some of the awesome features ✨:
  - User Notifications and Announcements
  - Fully Functional Blog
 
-![Architecture](https://user-images.githubusercontent.com/21223421/121784770-8c1f0500-cbbe-11eb-8f9b-b939fa9058b8.png)
+![MC Panel](https://user-images.githubusercontent.com/21223421/122522736-f56ba180-d01e-11eb-8e65-5d812190be47.png)
 
 ## 📹 Demo
 
@@ -63,6 +63,15 @@ git clone git@github.com:bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ;
 ```
 
 > Note: this process could take up to 5-10 minutes depending on the size of your server.
+
+Once the installation has been completed visit your server IP via your browser and you will be able to login with the following default login details:
+
+```
+user = admin@admin.com
+pass = password
+```
+
+> Make sure to change the login details as soon as possible!
 
 ## 🌊 Laravel Wave
 
