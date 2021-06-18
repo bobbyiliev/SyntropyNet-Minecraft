@@ -86,6 +86,10 @@ su syntropy
 bash /var/www/syntropynet/infrastructure/add.sh
 ```
 
+Once the command has finished running you will see the following output:
+
+![MC panel add server](https://user-images.githubusercontent.com/21223421/122613378-69dd2980-d08d-11eb-9c47-878b18178ae1.png)
+
 
 Then visit your server IP via your browser and you will be able to login with the following default login details:
 
