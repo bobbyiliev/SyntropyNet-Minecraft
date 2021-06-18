@@ -72,6 +72,8 @@ git clone https://github.com/bobbyiliev/SyntropyNet-Minecraft /var/www/syntropyn
 
 Once the installation has been completed, add your first MC server by running these two commands:
 
+> Note: It is important to create the first server via the command line with the bellow commands!
+
 * Switch to the `syntropy` user:
 
 ```
@@ -79,7 +81,7 @@ su syntropy
 ```
 
 * Create a new server:
-* 
+
 ```
 bash /var/www/syntropynet/infrastructure/add.sh
 ```
