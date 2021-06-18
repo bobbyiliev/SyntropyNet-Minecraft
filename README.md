@@ -66,7 +66,22 @@ git clone git@github.com:bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ;
 
 ## Usage
 
-Once the installation has been completed visit your server IP via your browser and you will be able to login with the following default login details:
+Once the installation has been completed, add your first MC server by running these two commands:
+
+* Switch to the `syntropy` user:
+
+```
+su syntropy
+```
+
+* Create a new server:
+* 
+```
+bash /var/www/syntropynet/infrastructure/add.sh
+```
+
+
+Then visit your server IP via your browser and you will be able to login with the following default login details:
 
 ```
 user = admin@admin.com
