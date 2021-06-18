@@ -59,7 +59,7 @@ export DO_API_KEY=YOUR_DO_API_KEY_HERE
 * Finally clone this repository and run the install script with this command:
 
 ```
-git clone git@github.com:bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ; cd /var/www/syntropynet ; time bash infrastructure/install
+git clone https://github.com/bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ; cd /var/www/syntropynet ; time bash infrastructure/install
 ```
 
 > Note: this process could take up to 5-10 minutes depending on the size of your server.
