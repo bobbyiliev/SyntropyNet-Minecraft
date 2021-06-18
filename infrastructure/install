@@ -273,6 +273,7 @@ function main(){
     bungeecord_install
     docker_install
     start_syntropy_agent
+    start_minectraft
     add_nginx_server_block
     install_syntropy_cli
     create_syntropy_network
