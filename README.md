@@ -1,3 +1,7 @@
+![Syntropy Hackathon Submittion](https://imgur.com/trT9KF5.png)
+
+---
+
 ## 💻 Syntropy Hackathon Submittion
 
 * Category: Gaming
@@ -27,7 +31,7 @@ Here are some of the awesome features ✨:
 
 ## 📹 Demo
 
-Video Comming Soon
+https://www.youtube.com/watch?v=A5utq5wjtO4
 
 
 ## 📜 Installation
@@ -126,11 +130,11 @@ Usually this takes up to a couple of minutes for the whole process to finish.
 
 ## 🤲 Contributing
 
-If you notice a problem please open an issue here on GitHub. Any PRs would also be appriciated!
+If you notice a problem please open an issue here on GitHub. Any PRs would also be appreciated!
 
 ## 🔐 Security Vulnerabilities
 
-If you discover a security vulnerability within MC Panel, please send an e-mail to bobby@bobbyiliev. All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within MC Panel, please send an e-mail to bobby@bobbyiliev[.]com. All security vulnerabilities will be promptly addressed.
 
 ## 🌊 Laravel Wave
 
