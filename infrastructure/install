@@ -234,6 +234,7 @@ function install_doctl_cli(){
     DO_SSH_KEY=$(echo $key_id | awk '{print $6}')
     sed -i "s/DO_SSH_KEY=/DO_SSH_KEY=${DO_SSH_KEY}/g" /var/www/syntropynet/.env
 
+    runuser -l  syntropy -c "/snap/bin/doctl auth init --access-token ${DO_API_KEY}"
 }
 
 function main(){
