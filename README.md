@@ -1,3 +1,7 @@
+![Syntropy Hackathon Submittion](https://imgur.com/trT9KF5.png)
+
+---
+
 ## 💻 Syntropy Hackathon Submittion
 
 * Category: Gaming
@@ -27,7 +31,7 @@ Here are some of the awesome features ✨:
 
 ## 📹 Demo
 
-Video Comming Soon
+https://www.youtube.com/watch?v=A5utq5wjtO4
 
 
 ## 📜 Installation
@@ -59,12 +63,35 @@ export DO_API_KEY=YOUR_DO_API_KEY_HERE
 * Finally clone this repository and run the install script with this command:
 
 ```
-git clone git@github.com:bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ; cd /var/www/syntropynet ; time bash infrastructure/install
+git clone https://github.com/bobbyiliev/SyntropyNet-Minecraft /var/www/syntropynet ; cd /var/www/syntropynet ; time bash infrastructure/install
 ```
 
 > Note: this process could take up to 5-10 minutes depending on the size of your server.
 
-Once the installation has been completed visit your server IP via your browser and you will be able to login with the following default login details:
+## Usage
+
+Once the installation has been completed, add your first MC server by running these two commands:
+
+> Note: It is important to create the first server via the command line with the bellow commands!
+
+* Switch to the `syntropy` user:
+
+```
+su syntropy
+```
+
+* Create a new server:
+
+```
+bash /var/www/syntropynet/infrastructure/add.sh
+```
+
+Once the command has finished running you will see the following output:
+
+![MC panel add server](https://user-images.githubusercontent.com/21223421/122613378-69dd2980-d08d-11eb-9c47-878b18178ae1.png)
+
+
+Then visit your server IP via your browser and you will be able to login with the following default login details:
 
 ```
 user = admin@admin.com
@@ -72,6 +99,48 @@ pass = password
 ```
 
 > Make sure to change the login details as soon as possible!
+
+To create a new server visit the dashboard at `your_ip/dashboard` and in order to add a new server just hit the `Add server` button.
+
+This will provision a new MC server and do all of the necessary configuration including:
+
+* Create a new DigitalOcean Ubuntu server
+* Install Docker
+* Start the Syntropy Agent with the Syntropy Agent token from your `.env` file
+* Start a new MC instance
+* Update the BugneeCord proxy configuration to include the new server
+
+### Shell Scripts
+
+For anyone who prefers the CLI rather than the MC panel UI, you could run the following commands in order to add and remove servers:
+
+First switch to the syntropy user:
+
+```
+su syntropy
+```
+
+* Adding a server:
+
+```
+bash /var/www/syntropynet/infrastructure/add.sh
+```
+
+* Removing a server:
+
+```
+bash /var/www/syntropynet/infrastructure/remove.sh SERVER_NAME_HERE
+```
+
+Usually this takes up to a couple of minutes for the whole process to finish.
+
+## 🤲 Contributing
+
+If you notice a problem please open an issue here on GitHub. Any PRs would also be appreciated!
+
+## 🔐 Security Vulnerabilities
+
+If you discover a security vulnerability within MC Panel, please send an e-mail to bobby@bobbyiliev[.]com. All security vulnerabilities will be promptly addressed.
 
 ## 🌊 Laravel Wave
 
